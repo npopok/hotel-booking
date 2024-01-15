@@ -7,8 +7,9 @@ import 'package:intl/intl.dart';
 
 import '../bloc/hotel_bloc.dart';
 import '../services/service_api.dart';
-import '../presentation/room_screen.dart';
 import '../models/hotel.dart';
+import '../presentation/navigation_button.dart';
+import '../presentation/room_screen.dart';
 
 class HotelSceeen extends StatefulWidget {
   static const routeName = '/hotel';
@@ -45,7 +46,7 @@ class _HotelSceeenState extends State<HotelSceeen> {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is HotelLoaded) {
-              return _buildBody(context, state.hotel);
+              return _buildBody(state.hotel);
             }
             if (state is HotelError) {
               return const Center(child: Text('Ошибка сервера. Попробуйте позже.'));
@@ -53,35 +54,36 @@ class _HotelSceeenState extends State<HotelSceeen> {
             return Container();
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: ElevatedButton(
-        onPressed: () =>
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const RoomScreen())),
-        child: const Text("К выбору номера"),
+      floatingActionButton: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: NavigationButton('К выбору номера', (_) => const RoomScreen())),
+    );
+  }
+
+  Widget _buildBody(Hotel hotel) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
+                color: Colors.white),
+            child: _buildTourDetails(hotel),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.white),
+            child: _buildHotelDetails(hotel),
+          ),
+          const SizedBox(height: 80),
+        ],
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context, Hotel hotel) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
-              color: Colors.white),
-          child: _buildTourDetails(context, hotel),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.white),
-          child: _buildHotelDetails(context, hotel),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTourDetails(BuildContext context, Hotel hotel) {
+  Widget _buildTourDetails(Hotel hotel) {
     return Container(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -107,16 +109,17 @@ class _HotelSceeenState extends State<HotelSceeen> {
               const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF0D72FF)),
         ),
         const SizedBox(height: 10),
-        Row(
-          children: [
-            Text('От ${formatMoney(hotel.minPrice)} ₽',
-                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
-            const SizedBox(width: 5),
-            Text(hotel.priceInfo,
-                style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w400, color: Color(0xFF828796))),
-          ],
-        )
+        RichText(
+            text: TextSpan(
+                text: 'От ${formatMoney(hotel.minPrice)} ₽ ',
+                style:
+                    const TextStyle(fontSize: 30, fontWeight: FontWeight.w500, color: Colors.black),
+                children: [
+              TextSpan(
+                  text: hotel.priceInfo,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w400, color: Color(0xFF828796))),
+            ])),
       ]),
     );
   }
@@ -180,8 +183,69 @@ class _HotelSceeenState extends State<HotelSceeen> {
     );
   }
 
-  Widget _buildHotelDetails(BuildContext context, Hotel hotel) {
+  Widget _buildHotelDetails(Hotel hotel) {
     return Container(
-        child: Text('Об отеле', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500)));
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text('Об отеле', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 10),
+          _buildHotelFeatures(hotel),
+          const SizedBox(height: 10),
+          Text(hotel.about.description,
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black.withOpacity(0.9))),
+          const SizedBox(height: 10),
+          _buildWhatsIncluded(),
+        ]));
+  }
+
+  Widget _buildHotelFeatures(Hotel hotel) {
+    return Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: List<Container>.generate(
+            hotel.about.features.length,
+            (index) => Container(
+                  padding: const EdgeInsets.all(5),
+                  color: const Color(0xFFFBFBFC),
+                  child: Text(
+                    hotel.about.features[index],
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF828796)),
+                  ),
+                )));
+  }
+
+  Widget _buildWhatsIncluded() {
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        _buildWhatsIncludedTile(Icons.mood, 24, 'Удобства', 'Самое необходимое'),
+        _buildWhatsIncludedTile(
+            Icons.check_circle_outline, 24, 'Что включено', 'Самое необходимое'),
+        _buildWhatsIncludedTile(Icons.highlight_off, 24, 'Что не включено', 'Самое необходимое'),
+      ],
+    );
+  }
+
+  ListTile _buildWhatsIncludedTile(IconData icon, double iconSize, String title, String subtitle) {
+    return ListTile(
+      visualDensity: const VisualDensity(vertical: -3),
+      leading: Icon(icon, size: iconSize),
+      title: Text(title,
+          style:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF2C3035))),
+      subtitle: Text(subtitle,
+          style:
+              const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF828796))),
+      trailing: const Icon(
+        Icons.chevron_right,
+        color: Color(0xFF2C3035),
+      ),
+      onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Не реализовано.'),
+        duration: Duration(seconds: 1),
+      )),
+    );
   }
 }
