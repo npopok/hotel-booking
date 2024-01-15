@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_booking/models/hotel.dart';
 
@@ -14,6 +16,7 @@ class HotelBloc extends Bloc<HotelEvent, HotelState> {
       try {
         emit(HotelLoading());
         var hotel = await hotelsApi.getHotel();
+        sleep(Duration(seconds: 3));
         emit(HotelLoaded(hotel));
       } catch (e) {
         emit(HotelError(e));
