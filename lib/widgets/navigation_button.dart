@@ -4,7 +4,7 @@ class NavigationButton extends StatelessWidget {
   final String title;
   final Widget Function(BuildContext) navigate;
 
-  const NavigationButton(this.title, this.navigate);
+  const NavigationButton(this.title, this.navigate, {super.key});
 
   @override
   Widget build(BuildContext context) {

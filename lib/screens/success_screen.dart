@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 
 class SuccessScreen extends StatelessWidget {
-  static const routeName = '/success';
-
   const SuccessScreen({super.key});
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Заказ оплачен")
-      ),
-      body: const Column(
-        children: [
-          Text("Ваш заказ принят в работу"),
-          ElevatedButton(
-            onPressed: null,
-            child: Text("Супер!"),
-           )
-        ]
-      ),
+      appBar: AppBar(title: const Text("Заказ оплачен")),
+      body: const Column(children: [
+        Text("Ваш заказ принят в работу"),
+        ElevatedButton(
+          onPressed: null,
+          child: Text("Супер!"),
+        )
+      ]),
     );
   }
 }

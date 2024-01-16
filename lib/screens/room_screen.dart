@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -39,19 +40,20 @@ class _RoomScreenState extends State<RoomScreen> {
       appBar: AppBar(title: Center(child: Text(widget.hotel.name))),
       backgroundColor: const Color(0xF0F6F6F9),
       body: BlocBuilder<RoomBloc, RoomState>(
-          bloc: roomBloc,
-          builder: (context, state) {
-            if (state is RoomLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state is RoomLoaded) {
-              return _buildBody(state.rooms);
-            }
-            if (state is RoomError) {
-              return const Center(child: Text('Ошибка сервера. Попробуйте позже.'));
-            }
-            return Container();
-          }),
+        bloc: roomBloc,
+        builder: (context, state) {
+          if (state is RoomLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is RoomLoaded) {
+            return _buildBody(state.rooms);
+          }
+          if (state is RoomError) {
+            return Center(child: Text('ServerError'.tr()));
+          }
+          return Container();
+        },
+      ),
     );
   }
 
@@ -83,9 +85,16 @@ class _RoomScreenState extends State<RoomScreen> {
         const SizedBox(height: 10),
         _buildMoreDetails(),
         const SizedBox(height: 15),
-        PriceInfo('${Formatter.formatMoney(room.price)} ₽ ', room.priceInfo),
+        PriceInfo(
+            'RoomScreen.PriceFormat'.tr(
+              args: [Formatter.formatMoney(room.price)],
+            ),
+            room.priceInfo),
         const SizedBox(height: 15),
-        NavigationButton('Выбрать номер', (_) => const PaymentScreen()),
+        NavigationButton(
+          'RoomScreen.SelectRoom'.tr(),
+          (_) => PaymentScreen(widget.hotel, room),
+        ),
       ],
     );
   }
@@ -93,9 +102,9 @@ class _RoomScreenState extends State<RoomScreen> {
   Widget _buildMoreDetails() {
     return InkWell(
       onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Не реализовано.'),
-          duration: Duration(seconds: 1),
+        SnackBar(
+          content: Text('NotImplemented'.tr()),
+          duration: const Duration(seconds: 1),
         ),
       ),
       child: Container(
@@ -105,14 +114,18 @@ class _RoomScreenState extends State<RoomScreen> {
           borderRadius: BorderRadius.circular(5),
           color: const Color(0xFF0D72FF).withOpacity(0.1),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Подробнее о номере',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF0D72FF)),
+              'RoomScreen.MoreDetails'.tr(),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF0D72FF),
+              ),
             ),
-            Icon(Icons.chevron_right, color: Color(0xFF0D72FF), size: 24),
+            const Icon(Icons.chevron_right, color: Color(0xFF0D72FF), size: 24),
           ],
         ),
       ),

@@ -40,7 +40,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
             errorBuilder: (context, error, stackTrace) => const Icon(Icons.error, size: 32)),
       ),
       options: CarouselOptions(
-        aspectRatio: 1.33,
+        aspectRatio: 4 / 3,
         viewportFraction: 1,
         onPageChanged: (index, _) => setState(() => (selectedImage = index)),
       ),

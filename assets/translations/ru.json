@@ -1,0 +1,16 @@
+{
+    "HotelScreen.Title": "Отель",
+    "HotelScreen.PriceFormat": "От {} ₽ ",
+    "HotelScreen.SelectRoom": "К выбору номера",
+    "HotelScreen.AboutHotel": "Об отеле",
+    "HotelScreen.StaticText1": "Удобства",
+    "HotelScreen.StaticText2": "Что включено",
+    "HotelScreen.StaticText3": "Что не включено",
+    "HotelScreen.StaticText4": "Самое необходимое",
+    "RoomScreen.SelectRoom": "Выбрать номер",
+    "RoomScreen.MoreDetails": "Подробнее о номере",
+    "RoomScreen.PriceFormat": "{} ₽ ",
+    "PaymentScreen.Title": "Бронирование",
+    "ServerError": "Ошибка сервера. Попробуйте позже.",
+    "NotImplemented": "Не рерализовано."
+}
