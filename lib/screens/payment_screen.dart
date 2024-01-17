@@ -1,71 +1,128 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
+import '../bloc/payment_bloc.dart';
 import '../models/hotel.dart';
 import '../models/room.dart';
 import '../models/tourist.dart';
+import '../models/order.dart';
 import '../screens/success_screen.dart';
 import '../widgets/rating_bar.dart';
 import '../widgets/navigation_button.dart';
 import '../widgets/rounded_container.dart';
 import '../widgets/phone_text_field.dart';
 import '../widgets/email_text_field.dart';
+import '../widgets/simple_text_field.dart';
+import '../widgets/date_text_field.dart';
 import '../utils/formatter.dart';
 
 class PaymentScreen extends StatefulWidget {
-  final Hotel hotel;
-  final Room room;
+  Order order;
 
-  const PaymentScreen(this.hotel, this.room, {super.key});
+  PaymentScreen(Hotel hotel, Room room, {super.key})
+      : order = Order(
+          hotel: hotel,
+          room: room,
+          tourists: [Tourist.empty()],
+        );
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  List<Tourist> tourists = [Tourist.empty()];
+  final paymentBloc = PaymentBloc();
+  bool isProcessing = false;
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('PaymentScreen.Title').tr()),
       backgroundColor: const Color(0xF0F6F6F9),
-      body: _buildBody(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // floatingActionButton: Container(
-      //   padding: const EdgeInsets.symmetric(horizontal: 16),
-      //   child: NavigationButton(
-      //     'Оплатить ${Formatter.formatMoney(room.price)} ₽',
-      //     (_) => const SuccessScreen(),
-      //   ),
-      // ),
+      body: BlocBuilder<PaymentBloc, PaymentState>(
+        bloc: paymentBloc,
+        builder: (context, state) {
+          if (state is PaymentInitial) {
+            return _buildBody();
+          }
+          if (state is PaymentProcessing) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is PaymentProcessed) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => SuccessScreen(state.orderId)),
+                (_) => false,
+              );
+            });
+          }
+          if (state is PaymentError) {
+            return Center(child: const Text('ServerError').tr());
+          }
+          return Container();
+        },
+      ),
+      bottomNavigationBar: Visibility(
+        visible: !isProcessing,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Color(0xFFE8E9EC)),
+              ),
+              color: Colors.white),
+          child: NavigationButton(
+            title: 'PaymentScreen.PriceFormat'.tr(
+              args: [Formatter.formatMoney(widget.order.room.price)],
+            ),
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                formKey.currentState!.save();
+                paymentBloc.add(PaymentProcess(widget.order));
+                setState(() => isProcessing = true);
+              }
+            },
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildBody() {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          Column(children: [
-            RoundedContainer(true, _buildHotelDetails()),
-            const SizedBox(height: 10),
-            RoundedContainer(false, _buildTripDetails()),
-            const SizedBox(height: 10),
-            RoundedContainer(false, _buildContactInfo()),
-            const SizedBox(height: 10),
-          ]),
-          Column(
-            children: List<RoundedContainer>.generate(
-              tourists.length,
-              (index) => RoundedContainer(
-                false,
-                _buildTouristDetails(index, tourists[index]),
+      child: Form(
+        key: formKey,
+        child: Column(
+          children: [
+            Column(children: [
+              RoundedContainer(true, _buildHotelDetails()),
+              const SizedBox(height: 10),
+              RoundedContainer(false, _buildTripDetails()),
+              const SizedBox(height: 10),
+              RoundedContainer(false, _buildContactInfo()),
+              const SizedBox(height: 10),
+            ]),
+            Column(
+              children: List<Widget>.generate(
+                widget.order.tourists.length,
+                (index) => Column(
+                  children: [
+                    RoundedContainer(
+                      false,
+                      _buildTouristDetails(index, widget.order.tourists[index]),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
               ),
             ),
-          ),
-          _buildAddTourist(),
-          const SizedBox(height: 20),
-        ],
+            _buildAddTourist(),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }
@@ -74,15 +131,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RatingBar(widget.hotel.rating, widget.hotel.ratingName),
+        RatingBar(
+          widget.order.hotel.rating,
+          widget.order.hotel.ratingName,
+        ),
         const SizedBox(height: 5),
         Text(
-          widget.hotel.name,
+          widget.order.hotel.name,
           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 5),
         Text(
-          widget.hotel.address,
+          widget.order.hotel.address,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -96,19 +156,40 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget _buildTripDetails() {
     return Column(
       children: [
-        _buildTripDetailsRow('Вылет из', 'Новосибирск'),
+        _buildTripDetailsRow(
+          'PaymentScreen.Departure'.tr(),
+          'PaymentScreen.Dummy1'.tr(),
+        ),
         const SizedBox(height: 10),
-        _buildTripDetailsRow('Страна, город', 'Египет, Хургада'),
+        _buildTripDetailsRow(
+          'PaymentScreen.Destination'.tr(),
+          'PaymentScreen.Dummy2'.tr(),
+        ),
         const SizedBox(height: 10),
-        _buildTripDetailsRow('Даты', '19.03.2024 - 27.03.2024'),
+        _buildTripDetailsRow(
+          'PaymentScreen.Dates'.tr(),
+          'PaymentScreen.Dummy3'.tr(),
+        ),
         const SizedBox(height: 10),
-        _buildTripDetailsRow('Кол-во ночей', '7 ночей'),
+        _buildTripDetailsRow(
+          'PaymentScreen.Nights'.tr(),
+          'PaymentScreen.Dummy4'.tr(),
+        ),
         const SizedBox(height: 10),
-        _buildTripDetailsRow('Отель', widget.hotel.name),
+        _buildTripDetailsRow(
+          'PaymentScreen.Hotel'.tr(),
+          widget.order.hotel.name,
+        ),
         const SizedBox(height: 10),
-        _buildTripDetailsRow('Номер', widget.room.name),
+        _buildTripDetailsRow(
+          'PaymentScreen.Room'.tr(),
+          widget.order.room.name,
+        ),
         const SizedBox(height: 10),
-        _buildTripDetailsRow('Питание', 'Все включено'),
+        _buildTripDetailsRow(
+          'PaymentScreen.Meal'.tr(),
+          'PaymentScreen.Dummy5'.tr(),
+        ),
       ],
     );
   }
@@ -145,18 +226,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Информация о покупателе',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+        Text(
+          'PaymentScreen.ContactInfo'.tr(),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 10),
-        const PhoneTextField(),
+        PhoneTextField(onSaved: (value) => widget.order.phone = value!),
         const SizedBox(height: 10),
-        const EmailTextField(),
+        EmailTextField(onSaved: (value) => widget.order.email = value!),
         const SizedBox(height: 10),
         Text(
-          'Эти данные никому не передаются. После оплаты мы вышлем чек на указанный вами номер и почту.',
-          style: TextStyle(
+          'PaymentScreen.DataDisclaimer'.tr(),
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: Color(0xFF828796),
@@ -167,12 +248,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildTouristDetails(int index, Tourist tourist) {
-    return RoundedContainer(
-      false,
-      Text(
-        'Добавить туриста',
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'PaymentScreen.Tourist${index + 1}'.tr(),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+        ),
+        // SimpleTextField(label: 'PaymentScreen.FirstName'.tr()),
+        // const SizedBox(height: 10),
+        // SimpleTextField(label: 'PaymentScreen.LastName'.tr()),
+        // const SizedBox(height: 10),
+        // DateTextField(
+        //   label: 'PaymentScreen.DateOfBirth'.tr(),
+        //   initialDate: tourist.dateOfBirth,
+        //   onUpdate: (date) => setState(() => tourist.dateOfBirth = date),
+        // ),
+        // const SizedBox(height: 10),
+        // SimpleTextField(label: 'PaymentScreen.Citizenship'.tr()),
+        // const SizedBox(height: 10),
+        // SimpleTextField(label: 'PaymentScreen.PassportNumber'.tr()),
+        // const SizedBox(height: 10),
+        // DateTextField(
+        //   label: 'PaymentScreen.PassportExpires'.tr(),
+        //   initialDate: tourist.passportExpires,
+        // ),
+      ],
     );
   }
 
@@ -181,10 +282,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
       false,
       Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
-              'Добавить туриста',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+              'PaymentScreen.AddTourist'.tr(),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
             ),
           ),
           Container(
@@ -196,7 +297,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
             child: IconButton(
               onPressed: () => setState(
-                () => tourists.add(Tourist.empty()),
+                () => widget.order.tourists.add(Tourist.empty()),
               ),
               padding: EdgeInsets.zero,
               icon: const Icon(Icons.add, size: 24),

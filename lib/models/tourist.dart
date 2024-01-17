@@ -1,25 +1,28 @@
 class Tourist {
-  final String firstName;
-  final String lastName;
-  final String citizenship;
-  final String passportId;
-  final DateTime passportExpire;
+  String firstName;
+  String lastName;
+  DateTime dateOfBirth;
+  String citizenship;
+  String passportNumber;
+  DateTime passportExpires;
 
   Tourist({
     required this.firstName,
     required this.lastName,
+    required this.dateOfBirth,
     required this.citizenship,
-    required this.passportId,
-    required this.passportExpire,
+    required this.passportNumber,
+    required this.passportExpires,
   });
 
   static Tourist empty() {
     return Tourist(
       firstName: '',
       lastName: '',
+      dateOfBirth: DateTime(0),
       citizenship: '',
-      passportId: '',
-      passportExpire: DateTime.now(),
+      passportNumber: '',
+      passportExpires: DateTime(0),
     );
   }
 }

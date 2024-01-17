@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class PhoneTextField extends StatelessWidget {
-  const PhoneTextField({super.key});
+  final void Function(String?)? onSaved;
+
+  const PhoneTextField({required this.onSaved, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +16,13 @@ class PhoneTextField extends StatelessWidget {
         fontWeight: FontWeight.w400,
         color: Color(0xFF14142B),
       ),
-      decoration: const InputDecoration(
-        labelText: 'Номер телефона',
-        hintText: '+7 (***) ***-**-**',
+      decoration: InputDecoration(
+        labelText: 'PhoneTextField.Label'.tr(),
+        hintText: 'PhoneTextField.Hint'.tr(),
         filled: true,
-        fillColor: Color(0xFFF6F6F9),
+        fillColor: const Color(0xFFF6F6F9),
         border: InputBorder.none,
-        labelStyle: TextStyle(
+        labelStyle: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w400,
           color: Color(0xFFA9ABB7),
@@ -27,11 +30,12 @@ class PhoneTextField extends StatelessWidget {
       ),
       inputFormatters: [
         MaskTextInputFormatter(
-          mask: '+7 (###) ###-##-##',
+          mask: 'PhoneTextField.Mask'.tr(),
           filter: {"#": RegExp(r'[0-9]')},
           type: MaskAutoCompletionType.lazy,
         )
       ],
+      onSaved: onSaved,
     );
   }
 }

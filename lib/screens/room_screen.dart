@@ -92,8 +92,11 @@ class _RoomScreenState extends State<RoomScreen> {
             room.priceInfo),
         const SizedBox(height: 15),
         NavigationButton(
-          'RoomScreen.SelectRoom'.tr(),
-          (_) => PaymentScreen(widget.hotel, room),
+          title: 'RoomScreen.SelectRoom'.tr(),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => PaymentScreen(widget.hotel, room)),
+          ),
         ),
       ],
     );

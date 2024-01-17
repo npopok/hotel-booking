@@ -10,7 +10,7 @@ class HotelBloc extends Bloc<HotelEvent, HotelState> {
   final HotelsApi hotelsApi;
 
   HotelBloc(this.hotelsApi) : super(HotelInitial()) {
-    on<LoadHotelEvent>((event, emit) async {
+    on<HotelLoad>((event, emit) async {
       try {
         emit(HotelLoading());
         var hotel = await hotelsApi.getHotel();

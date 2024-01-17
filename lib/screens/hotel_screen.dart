@@ -1,7 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../bloc/hotel_bloc.dart';
 import '../services/service_api.dart';
@@ -28,7 +28,7 @@ class _HotelSceeenState extends State<HotelSceeen> {
 
   @override
   void initState() {
-    hotelBloc.add(LoadHotelEvent());
+    hotelBloc.add(HotelLoad());
     super.initState();
   }
 
@@ -52,12 +52,19 @@ class _HotelSceeenState extends State<HotelSceeen> {
           return Container();
         },
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(color: Color(0xFFE8E9EC)),
+            ),
+            color: Colors.white),
         child: NavigationButton(
-          'HotelScreen.SelectRoom'.tr(),
-          (_) => RoomScreen(hotel!),
+          title: 'HotelScreen.SelectRoom'.tr(),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => RoomScreen(hotel!)),
+          ),
         ),
       ),
     );
@@ -71,7 +78,7 @@ class _HotelSceeenState extends State<HotelSceeen> {
           RoundedContainer(true, _buildTourDetails(hotel)),
           const SizedBox(height: 10),
           RoundedContainer(false, _buildHotelDetails(hotel)),
-          const SizedBox(height: 80),
+          const SizedBox(height: 10),
         ],
       ),
     );
