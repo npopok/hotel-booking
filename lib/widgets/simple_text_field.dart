@@ -4,12 +4,12 @@ import "package:flutter/services.dart";
 class SimpleTextField extends StatelessWidget {
   final String label;
   final int maxLength;
-  final void Function()? onTap;
+  final void Function(String?)? onSaved;
 
   const SimpleTextField({
     required this.label,
     this.maxLength = 50,
-    this.onTap,
+    this.onSaved,
     super.key,
   });
 
@@ -34,7 +34,7 @@ class SimpleTextField extends StatelessWidget {
           color: Color(0xFFA9ABB7),
         ),
       ),
-      onTap: () => onTap,
+      onSaved: onSaved,
     );
   }
 }

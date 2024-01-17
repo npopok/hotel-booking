@@ -13,7 +13,7 @@ import '../widgets/navigation_button.dart';
 import '../widgets/image_carousel.dart';
 import '../widgets/price_info.dart';
 import '../widgets/rounded_container.dart';
-import '../utils/formatter.dart';
+import '../utils/value_formatter.dart';
 
 class RoomScreen extends StatefulWidget {
   final Hotel hotel;
@@ -87,7 +87,7 @@ class _RoomScreenState extends State<RoomScreen> {
         const SizedBox(height: 15),
         PriceInfo(
             'RoomScreen.PriceFormat'.tr(
-              args: [Formatter.formatMoney(room.price)],
+              args: [ValueFormatter.formatMoney(room.price)],
             ),
             room.priceInfo),
         const SizedBox(height: 15),

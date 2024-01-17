@@ -15,7 +15,8 @@ import '../widgets/phone_text_field.dart';
 import '../widgets/email_text_field.dart';
 import '../widgets/simple_text_field.dart';
 import '../widgets/date_text_field.dart';
-import '../utils/formatter.dart';
+import '../widgets/expandable_tile.dart';
+import '../utils/value_formatter.dart';
 
 class PaymentScreen extends StatefulWidget {
   Order order;
@@ -75,8 +76,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
               color: Colors.white),
           child: NavigationButton(
-            title: 'PaymentScreen.PriceFormat'.tr(
-              args: [Formatter.formatMoney(widget.order.room.price)],
+            title: 'PaymentScreen.PayButton'.tr(
+              args: [ValueFormatter.formatMoney(widget.order.room.price)],
             ),
             onPressed: () {
               if (formKey.currentState!.validate()) {
@@ -120,6 +121,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ),
             _buildAddTourist(),
+            const SizedBox(height: 10),
+            RoundedContainer(false, _buildPaymentSummary()),
             const SizedBox(height: 10),
           ],
         ),
@@ -248,31 +251,43 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildTouristDetails(int index, Tourist tourist) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ExpandableTile(
+      title: 'PaymentScreen.Tourist${index + 1}'.tr(),
       children: [
-        Text(
-          'PaymentScreen.Tourist${index + 1}'.tr(),
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+        const SizedBox(height: 10),
+        SimpleTextField(
+          label: 'PaymentScreen.FirstName'.tr(),
+          onSaved: (value) => tourist.firstName = value!,
         ),
-        // SimpleTextField(label: 'PaymentScreen.FirstName'.tr()),
-        // const SizedBox(height: 10),
-        // SimpleTextField(label: 'PaymentScreen.LastName'.tr()),
-        // const SizedBox(height: 10),
-        // DateTextField(
-        //   label: 'PaymentScreen.DateOfBirth'.tr(),
-        //   initialDate: tourist.dateOfBirth,
-        //   onUpdate: (date) => setState(() => tourist.dateOfBirth = date),
-        // ),
-        // const SizedBox(height: 10),
-        // SimpleTextField(label: 'PaymentScreen.Citizenship'.tr()),
-        // const SizedBox(height: 10),
-        // SimpleTextField(label: 'PaymentScreen.PassportNumber'.tr()),
-        // const SizedBox(height: 10),
-        // DateTextField(
-        //   label: 'PaymentScreen.PassportExpires'.tr(),
-        //   initialDate: tourist.passportExpires,
-        // ),
+        const SizedBox(height: 10),
+        SimpleTextField(
+          label: 'PaymentScreen.LastName'.tr(),
+          onSaved: (value) => tourist.lastName = value!,
+        ),
+        const SizedBox(height: 10),
+        DateTextField(
+          label: 'PaymentScreen.DateOfBirth'.tr(),
+          minDate: DateTime.now().subtract(const Duration(days: 366 * 100)),
+          maxDate: DateTime.now(),
+          onSaved: (date) => tourist.dateOfBirth = date,
+        ),
+        const SizedBox(height: 10),
+        SimpleTextField(
+          label: 'PaymentScreen.Citizenship'.tr(),
+          onSaved: (value) => tourist.citizenship = value!,
+        ),
+        const SizedBox(height: 10),
+        SimpleTextField(
+          label: 'PaymentScreen.PassportNumber'.tr(),
+          onSaved: (value) => tourist.passportNumber = value!,
+        ),
+        const SizedBox(height: 10),
+        DateTextField(
+          label: 'PaymentScreen.PassportExpires'.tr(),
+          minDate: DateTime.now(),
+          maxDate: DateTime.now().add(const Duration(days: 366 * 10)),
+          onSaved: (date) => tourist.passportExpires = date,
+        ),
       ],
     );
   }
@@ -306,6 +321,73 @@ class _PaymentScreenState extends State<PaymentScreen> {
           )
         ],
       ),
+    );
+  }
+
+  Widget _buildPaymentSummary() {
+    double tourPrice = widget.order.room.price;
+    double fuelSurcharge = widget.order.room.price * 0.05;
+    double serviceSurcharge = widget.order.room.price * 0.0115;
+    double totalPrice = tourPrice + fuelSurcharge + serviceSurcharge;
+
+    return Column(children: [
+      _buildPaymentSummaryRow(
+        'PaymentScreen.Tour'.tr(),
+        'PaymentScreen.PriceFormat'.tr(
+          args: [ValueFormatter.formatMoney(tourPrice)],
+        ),
+      ),
+      const SizedBox(height: 10),
+      _buildPaymentSummaryRow(
+        'PaymentScreen.FuelSurcharge'.tr(),
+        'PaymentScreen.PriceFormat'.tr(
+          args: [ValueFormatter.formatMoney(fuelSurcharge)],
+        ),
+      ),
+      const SizedBox(height: 10),
+      _buildPaymentSummaryRow(
+        'PaymentScreen.ServiceSurcharge'.tr(),
+        'PaymentScreen.PriceFormat'.tr(
+          args: [ValueFormatter.formatMoney(serviceSurcharge)],
+        ),
+      ),
+      const SizedBox(height: 10),
+      _buildPaymentSummaryRow(
+        'PaymentScreen.TotalPrice'.tr(),
+        'PaymentScreen.PriceFormat'.tr(
+          args: [ValueFormatter.formatMoney(totalPrice)],
+        ),
+        totalPrice: true,
+      ),
+    ]);
+  }
+
+  Widget _buildPaymentSummaryRow(String leftText, String rightText, {bool totalPrice = false}) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 200,
+          child: Text(
+            leftText,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF828796),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            rightText,
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: totalPrice ? FontWeight.w600 : FontWeight.w400,
+              color: totalPrice ? const Color(0xFF0D72FF) : Colors.black,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

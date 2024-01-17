@@ -13,7 +13,7 @@ import '../widgets/feature_list.dart';
 import '../widgets/price_info.dart';
 import '../widgets/rating_bar.dart';
 import '../widgets/rounded_container.dart';
-import '../utils/formatter.dart';
+import '../utils/value_formatter.dart';
 
 class HotelSceeen extends StatefulWidget {
   const HotelSceeen({super.key});
@@ -105,7 +105,7 @@ class _HotelSceeenState extends State<HotelSceeen> {
         ),
       ),
       const SizedBox(height: 10),
-      PriceInfo('HotelScreen.PriceFormat'.tr(args: [Formatter.formatMoney(hotel.minPrice)]),
+      PriceInfo('HotelScreen.PriceFormat'.tr(args: [ValueFormatter.formatMoney(hotel.minPrice)]),
           hotel.priceInfo),
     ]);
   }
