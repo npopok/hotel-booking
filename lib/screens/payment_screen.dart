@@ -77,7 +77,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               color: Colors.white),
           child: NavigationButton(
             title: 'PaymentScreen.PayButton'.tr(
-              args: [ValueFormatter.formatMoney(widget.order.room.price)],
+              args: [ValueFormatter.formatMoney(widget.order.totalPrice)],
             ),
             onPressed: () {
               if (formKey.currentState!.validate()) {
@@ -325,37 +325,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildPaymentSummary() {
-    double tourPrice = widget.order.room.price;
-    double fuelSurcharge = widget.order.room.price * 0.05;
-    double serviceSurcharge = widget.order.room.price * 0.0115;
-    double totalPrice = tourPrice + fuelSurcharge + serviceSurcharge;
-
     return Column(children: [
       _buildPaymentSummaryRow(
         'PaymentScreen.Tour'.tr(),
         'PaymentScreen.PriceFormat'.tr(
-          args: [ValueFormatter.formatMoney(tourPrice)],
+          args: [ValueFormatter.formatMoney(widget.order.tourPrice)],
         ),
       ),
       const SizedBox(height: 10),
       _buildPaymentSummaryRow(
         'PaymentScreen.FuelSurcharge'.tr(),
         'PaymentScreen.PriceFormat'.tr(
-          args: [ValueFormatter.formatMoney(fuelSurcharge)],
+          args: [ValueFormatter.formatMoney(widget.order.fuelSurcharge)],
         ),
       ),
       const SizedBox(height: 10),
       _buildPaymentSummaryRow(
         'PaymentScreen.ServiceSurcharge'.tr(),
         'PaymentScreen.PriceFormat'.tr(
-          args: [ValueFormatter.formatMoney(serviceSurcharge)],
+          args: [ValueFormatter.formatMoney(widget.order.serviceSurcharge)],
         ),
       ),
       const SizedBox(height: 10),
       _buildPaymentSummaryRow(
         'PaymentScreen.TotalPrice'.tr(),
         'PaymentScreen.PriceFormat'.tr(
-          args: [ValueFormatter.formatMoney(totalPrice)],
+          args: [ValueFormatter.formatMoney(widget.order.totalPrice)],
         ),
         totalPrice: true,
       ),
