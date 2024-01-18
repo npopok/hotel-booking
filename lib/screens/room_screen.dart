@@ -97,7 +97,7 @@ class _RoomScreenState extends State<RoomScreen> {
           title: 'RoomScreen.SelectRoom'.tr(),
           onPressed: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => PaymentScreen(widget.hotel, room)),
+            MaterialPageRoute(builder: (_) => const PaymentScreen()),
           ),
         ),
       ],

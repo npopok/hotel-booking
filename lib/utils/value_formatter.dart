@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-class ValueFormatter {
+abstract class ValueFormatter {
   static String formatMoney(double money) {
     return NumberFormat("#,###", "en_US").format(money).replaceAll(',', ' ');
   }

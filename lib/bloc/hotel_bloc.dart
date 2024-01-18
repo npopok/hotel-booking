@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hotel_booking/models/hotel.dart';
 
+import '../models/hotel.dart';
 import '../services/service_api.dart';
 
 part 'hotel_event.dart';

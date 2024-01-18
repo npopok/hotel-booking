@@ -4,6 +4,13 @@ class PaymentState {}
 
 class PaymentInitial extends PaymentState {}
 
+class PaymentLoading extends PaymentState {}
+
+class PaymentLoaded extends PaymentState {
+  final Tour tour;
+  PaymentLoaded(this.tour);
+}
+
 class PaymentProcessing extends PaymentState {}
 
 class PaymentProcessed extends PaymentState {

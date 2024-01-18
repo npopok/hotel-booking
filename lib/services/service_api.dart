@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 
 import '../models/hotel.dart';
 import '../models/room.dart';
+import '../models/tour.dart';
 
 part 'service_api.g.dart';
 
@@ -20,4 +21,12 @@ abstract class RoomsApi {
 
   @GET('/')
   Future<Rooms> getRooms();
+}
+
+@RestApi(baseUrl: 'https://run.mocky.io/v3/63866c74-d593-432c-af8e-f279d1a8d2ff')
+abstract class ToursApi {
+  factory ToursApi(Dio dio, {String baseUrl}) = _ToursApi;
+
+  @GET('/')
+  Future<Tour> getTour();
 }

@@ -17,6 +17,7 @@ class SuccessScreen extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,11 +42,7 @@ class SuccessScreen extends StatelessWidget {
             const SizedBox(height: 30),
             Text(
               'SuccessScreen.Confirmation'.tr(),
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
             Text(
