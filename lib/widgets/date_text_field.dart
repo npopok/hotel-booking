@@ -36,17 +36,7 @@ class _DateTextFieldState extends State<DateTextField> {
         fontWeight: FontWeight.w400,
         color: Color(0xFF14142B),
       ),
-      decoration: InputDecoration(
-        labelText: widget.label,
-        filled: true,
-        fillColor: const Color(0xFFF6F6F9),
-        border: InputBorder.none,
-        labelStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: Color(0xFFA9ABB7),
-        ),
-      ),
+      decoration: InputDecoration(labelText: widget.label),
       inputFormatters: [
         MaskTextInputFormatter(
           mask: '##.##.####',

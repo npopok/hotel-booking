@@ -13,6 +13,7 @@ import '../widgets/feature_list.dart';
 import '../widgets/price_info.dart';
 import '../widgets/rating_bar.dart';
 import '../widgets/rounded_container.dart';
+import '../widgets/not_implemented.dart';
 import '../utils/value_formatter.dart';
 
 class HotelSceeen extends StatefulWidget {
@@ -35,8 +36,9 @@ class _HotelSceeenState extends State<HotelSceeen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text('HotelScreen.Title'.tr()))),
-      backgroundColor: const Color(0xF0F6F6F9),
+      appBar: AppBar(
+        title: Center(child: Text('HotelScreen.Title'.tr())),
+      ),
       body: BlocBuilder<HotelBloc, HotelState>(
         bloc: hotelBloc,
         builder: (context, state) {
@@ -90,19 +92,18 @@ class _HotelSceeenState extends State<HotelSceeen> {
       const SizedBox(height: 10),
       RatingBar(hotel.rating, hotel.ratingName),
       const SizedBox(height: 5),
-      Text(hotel.name,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w500,
-          )),
+      Text(hotel.name, style: Theme.of(context).textTheme.titleLarge),
       const SizedBox(height: 5),
-      Text(
-        hotel.address,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: Color(0xFF0D72FF),
+      InkWell(
+        child: Text(
+          hotel.address,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF0D72FF),
+          ),
         ),
+        onTap: () => NotImplemented.showMessage(context),
       ),
       const SizedBox(height: 10),
       PriceInfo('HotelScreen.PriceFormat'.tr(args: [ValueFormatter.formatMoney(hotel.minPrice)]),
@@ -114,7 +115,7 @@ class _HotelSceeenState extends State<HotelSceeen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         'HotelScreen.AboutHotel'.tr(),
-        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+        style: Theme.of(context).textTheme.titleLarge,
       ),
       const SizedBox(height: 10),
       FeatureList(hotel.about.features),
@@ -179,12 +180,7 @@ class _HotelSceeenState extends State<HotelSceeen> {
         Icons.chevron_right,
         color: Color(0xFF2C3035),
       ),
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('NotImplemented'.tr()),
-          duration: const Duration(seconds: 1),
-        ),
-      ),
+      onTap: () => NotImplemented.showMessage(context),
     );
   }
 }

@@ -13,6 +13,7 @@ import '../widgets/navigation_button.dart';
 import '../widgets/image_carousel.dart';
 import '../widgets/price_info.dart';
 import '../widgets/rounded_container.dart';
+import '../widgets/not_implemented.dart';
 import '../utils/value_formatter.dart';
 
 class RoomScreen extends StatefulWidget {
@@ -37,8 +38,9 @@ class _RoomScreenState extends State<RoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text(widget.hotel.name))),
-      backgroundColor: const Color(0xF0F6F6F9),
+      appBar: AppBar(
+        title: Center(child: Text(widget.hotel.name)),
+      ),
       body: BlocBuilder<RoomBloc, RoomState>(
         bloc: roomBloc,
         builder: (context, state) {
@@ -79,7 +81,7 @@ class _RoomScreenState extends State<RoomScreen> {
       children: [
         ImageCarousel(room.imageUrls),
         const SizedBox(height: 10),
-        Text(room.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500)),
+        Text(room.name, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 5),
         FeatureList(room.features),
         const SizedBox(height: 10),
@@ -104,12 +106,7 @@ class _RoomScreenState extends State<RoomScreen> {
 
   Widget _buildMoreDetails() {
     return InkWell(
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('NotImplemented'.tr()),
-          duration: const Duration(seconds: 1),
-        ),
-      ),
+      onTap: () => NotImplemented.showMessage(context),
       child: Container(
         padding: const EdgeInsets.only(left: 10, top: 2, bottom: 2, right: 5),
         height: 29,

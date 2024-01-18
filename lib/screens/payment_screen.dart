@@ -40,8 +40,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('PaymentScreen.Title').tr()),
-      backgroundColor: const Color(0xF0F6F6F9),
+      appBar: AppBar(
+        title: const Text('PaymentScreen.Title').tr(),
+      ),
       body: BlocBuilder<PaymentBloc, PaymentState>(
         bloc: paymentBloc,
         builder: (context, state) {
@@ -141,7 +142,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         const SizedBox(height: 5),
         Text(
           widget.order.hotel.name,
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 5),
         Text(
@@ -231,7 +232,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       children: [
         Text(
           'PaymentScreen.ContactInfo'.tr(),
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 10),
         PhoneTextField(onSaved: (value) => widget.order.phone = value!),
@@ -279,6 +280,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
         const SizedBox(height: 10),
         SimpleTextField(
           label: 'PaymentScreen.PassportNumber'.tr(),
+          maxLength: 9,
+          keyboardType: TextInputType.number,
           onSaved: (value) => tourist.passportNumber = value!,
         ),
         const SizedBox(height: 10),
@@ -300,7 +303,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           Expanded(
             child: Text(
               'PaymentScreen.AddTourist'.tr(),
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           Container(

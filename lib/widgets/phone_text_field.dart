@@ -19,14 +19,6 @@ class PhoneTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'PhoneTextField.Label'.tr(),
         hintText: 'PhoneTextField.Hint'.tr(),
-        filled: true,
-        fillColor: const Color(0xFFF6F6F9),
-        border: InputBorder.none,
-        labelStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: Color(0xFFA9ABB7),
-        ),
       ),
       inputFormatters: [
         MaskTextInputFormatter(

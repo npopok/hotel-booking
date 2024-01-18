@@ -16,17 +16,7 @@ class EmailTextField extends StatelessWidget {
         fontWeight: FontWeight.w400,
         color: Color(0xFF14142B),
       ),
-      decoration: InputDecoration(
-        labelText: 'EmailTextField.Label'.tr(),
-        filled: true,
-        fillColor: const Color(0xFFF6F6F9),
-        border: InputBorder.none,
-        labelStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: Color(0xFFA9ABB7),
-        ),
-      ),
+      decoration: InputDecoration(labelText: 'EmailTextField.Label'.tr()),
       inputFormatters: [
         MaskTextInputFormatter(
           filter: {"*": RegExp(r'[0-9][a-z][A-Z]')},
